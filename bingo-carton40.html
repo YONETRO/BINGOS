@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bingo Carton 40</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+input[type=checkbox] { position:fixed; opacity:0; pointer-events:none; width:1px; height:1px; }
+
+body {
+  font-family:Arial,sans-serif; font-weight:bold;
+  background:#e0f7f7; text-align:center;
+  padding:14px 8px 40px; min-height:100vh;
+}
+h1 { color:#00a0a0; font-size:50px; letter-spacing:8px; margin-bottom:8px; text-shadow:0 3px 0 #007070; }
+.badge {
+  display:inline-block; background:#00a0a0; color:white;
+  font-size:19px; padding:9px 28px; border-radius:30px; margin-bottom:10px;
+}
+.hint { color:#007070; font-size:15px; margin-bottom:14px; }
+
+.card-outer {
+  background:white; border-radius:20px; padding:12px;
+  max-width:380px; margin:0 auto 20px;
+  border:4px solid #00a0a066;
+  box-shadow:0 6px 24px #00a0a022;
+}
+.tablawrap table { width:100%; border-collapse:separate; border-spacing:5px; }
+.tablawrap th { color:#00a0a0; font-size:26px; padding:5px 0; width:20%; }
+.tablawrap td { width:20%; padding:0; }
+
+.ficha {
+  display:table;
+  width:16vw; height:16vw;
+  max-width:58px; max-height:58px;
+  min-width:40px; min-height:40px;
+  border-radius:50%;
+  background:#00a0a0; color:white;
+  font-size:16px; font-weight:bold;
+  margin:0 auto;
+  border:2px solid #009090;
+  cursor:pointer;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+  text-decoration:none;
+}
+.ficha span {
+  display:table-cell;
+  vertical-align:middle;
+  text-align:center;
+  line-height:1.1;
+  pointer-events:none;
+}
+.ficha.libre {
+  cursor:default;
+  background:#b2ecec; color:#00a0a0;
+  border:2px solid #00a0a066; font-size:20px;
+}
+
+/* === FICHAS MARCADAS === */
+#cb00:checked ~ .tablawrap label[for='cb00'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb01:checked ~ .tablawrap label[for='cb01'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb02:checked ~ .tablawrap label[for='cb02'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb03:checked ~ .tablawrap label[for='cb03'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb04:checked ~ .tablawrap label[for='cb04'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb10:checked ~ .tablawrap label[for='cb10'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb11:checked ~ .tablawrap label[for='cb11'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb12:checked ~ .tablawrap label[for='cb12'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb13:checked ~ .tablawrap label[for='cb13'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb14:checked ~ .tablawrap label[for='cb14'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb20:checked ~ .tablawrap label[for='cb20'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb21:checked ~ .tablawrap label[for='cb21'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb23:checked ~ .tablawrap label[for='cb23'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb24:checked ~ .tablawrap label[for='cb24'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb30:checked ~ .tablawrap label[for='cb30'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb31:checked ~ .tablawrap label[for='cb31'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb32:checked ~ .tablawrap label[for='cb32'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb33:checked ~ .tablawrap label[for='cb33'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb34:checked ~ .tablawrap label[for='cb34'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb40:checked ~ .tablawrap label[for='cb40'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb41:checked ~ .tablawrap label[for='cb41'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb42:checked ~ .tablawrap label[for='cb42'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb43:checked ~ .tablawrap label[for='cb43'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+#cb44:checked ~ .tablawrap label[for='cb44'] { background:white !important; color:#00a0a0 !important; border:3px solid #00a0a0 !important; }
+
+
+/* === BANNER BINGO === */
+.bingo-banner {
+  display:none;
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(0,90,90,0.94);
+  z-index:999;
+  align-items:center; justify-content:center;
+  padding:20px;
+}
+.bingo-box {
+  background:white; border:5px solid #00a0a0;
+  border-radius:24px; padding:28px 18px 22px;
+  max-width:340px; width:100%;
+  text-align:center;
+}
+.bingo-tit { font-size:68px; color:#00a0a0; line-height:1; margin-bottom:8px; }
+.bingo-carton { font-size:20px; color:#007070; margin-bottom:8px; }
+.bingo-patron { font-size:18px; color:#00a0a0; font-weight:bold; margin-bottom:14px; min-height:24px; }
+.bingo-msg { font-size:15px; color:#004444; line-height:1.7; margin-bottom:22px; }
+.bingo-btn {
+  display:inline-block;
+  background:#00a0a0; color:white;
+  border:none; border-radius:40px;
+  padding:15px 30px; font-size:19px;
+  font-weight:bold; font-family:Arial,sans-serif;
+  cursor:pointer; text-decoration:none;
+  box-shadow:0 5px 0 #006060;
+}
+
+/* === BINGO detectado === */
+#cb00:checked#cb04:checked#cb40:checked#cb44:checked ~ .bingo-banner { display:flex !important; }
+#cb00:checked#cb04:checked#cb40:checked#cb44:checked ~ .bingo-banner #pat0 { display:block !important; }
+#cb00:checked#cb11:checked#cb33:checked#cb44:checked ~ .bingo-banner { display:flex !important; }
+#cb00:checked#cb11:checked#cb33:checked#cb44:checked ~ .bingo-banner #pat1 { display:block !important; }
+#cb04:checked#cb13:checked#cb31:checked#cb40:checked ~ .bingo-banner { display:flex !important; }
+#cb04:checked#cb13:checked#cb31:checked#cb40:checked ~ .bingo-banner #pat2 { display:block !important; }
+#cb00:checked#cb01:checked#cb02:checked#cb03:checked#cb04:checked ~ .bingo-banner { display:flex !important; }
+#cb00:checked#cb01:checked#cb02:checked#cb03:checked#cb04:checked ~ .bingo-banner #pat3 { display:block !important; }
+#cb10:checked#cb11:checked#cb12:checked#cb13:checked#cb14:checked ~ .bingo-banner { display:flex !important; }
+#cb10:checked#cb11:checked#cb12:checked#cb13:checked#cb14:checked ~ .bingo-banner #pat4 { display:block !important; }
+#cb20:checked#cb21:checked#cb23:checked#cb24:checked ~ .bingo-banner { display:flex !important; }
+#cb20:checked#cb21:checked#cb23:checked#cb24:checked ~ .bingo-banner #pat5 { display:block !important; }
+#cb30:checked#cb31:checked#cb32:checked#cb33:checked#cb34:checked ~ .bingo-banner { display:flex !important; }
+#cb30:checked#cb31:checked#cb32:checked#cb33:checked#cb34:checked ~ .bingo-banner #pat6 { display:block !important; }
+#cb40:checked#cb41:checked#cb42:checked#cb43:checked#cb44:checked ~ .bingo-banner { display:flex !important; }
+#cb40:checked#cb41:checked#cb42:checked#cb43:checked#cb44:checked ~ .bingo-banner #pat7 { display:block !important; }
+#cb00:checked#cb10:checked#cb20:checked#cb30:checked#cb40:checked ~ .bingo-banner { display:flex !important; }
+#cb00:checked#cb10:checked#cb20:checked#cb30:checked#cb40:checked ~ .bingo-banner #pat8 { display:block !important; }
+#cb01:checked#cb11:checked#cb21:checked#cb31:checked#cb41:checked ~ .bingo-banner { display:flex !important; }
+#cb01:checked#cb11:checked#cb21:checked#cb31:checked#cb41:checked ~ .bingo-banner #pat9 { display:block !important; }
+#cb02:checked#cb12:checked#cb32:checked#cb42:checked ~ .bingo-banner { display:flex !important; }
+#cb02:checked#cb12:checked#cb32:checked#cb42:checked ~ .bingo-banner #pat10 { display:block !important; }
+#cb03:checked#cb13:checked#cb23:checked#cb33:checked#cb43:checked ~ .bingo-banner { display:flex !important; }
+#cb03:checked#cb13:checked#cb23:checked#cb33:checked#cb43:checked ~ .bingo-banner #pat11 { display:block !important; }
+#cb04:checked#cb14:checked#cb24:checked#cb34:checked#cb44:checked ~ .bingo-banner { display:flex !important; }
+#cb04:checked#cb14:checked#cb24:checked#cb34:checked#cb44:checked ~ .bingo-banner #pat12 { display:block !important; }
+#cb00:checked#cb01:checked#cb10:checked#cb11:checked ~ .bingo-banner { display:flex !important; }
+#cb00:checked#cb01:checked#cb10:checked#cb11:checked ~ .bingo-banner #pat13 { display:block !important; }
+#cb03:checked#cb04:checked#cb13:checked#cb14:checked ~ .bingo-banner { display:flex !important; }
+#cb03:checked#cb04:checked#cb13:checked#cb14:checked ~ .bingo-banner #pat14 { display:block !important; }
+#cb30:checked#cb31:checked#cb40:checked#cb41:checked ~ .bingo-banner { display:flex !important; }
+#cb30:checked#cb31:checked#cb40:checked#cb41:checked ~ .bingo-banner #pat15 { display:block !important; }
+#cb33:checked#cb34:checked#cb43:checked#cb44:checked ~ .bingo-banner { display:flex !important; }
+#cb33:checked#cb34:checked#cb43:checked#cb44:checked ~ .bingo-banner #pat16 { display:block !important; }
+#cb11:checked#cb13:checked#cb31:checked#cb33:checked ~ .bingo-banner { display:flex !important; }
+#cb11:checked#cb13:checked#cb31:checked#cb33:checked ~ .bingo-banner #pat17 { display:block !important; }
+#cb12:checked#cb21:checked#cb32:checked#cb23:checked ~ .bingo-banner { display:flex !important; }
+#cb12:checked#cb21:checked#cb32:checked#cb23:checked ~ .bingo-banner #pat18 { display:block !important; }
+#cb02:checked#cb20:checked#cb42:checked#cb24:checked ~ .bingo-banner { display:flex !important; }
+#cb02:checked#cb20:checked#cb42:checked#cb24:checked ~ .bingo-banner #pat19 { display:block !important; }
+
+
+</style>
+</head>
+<body>
+
+<!-- CHECKBOXES PRIMERO — antes de cualquier otro elemento -->
+<input type="checkbox" id="cb00">
+<input type="checkbox" id="cb01">
+<input type="checkbox" id="cb02">
+<input type="checkbox" id="cb03">
+<input type="checkbox" id="cb04">
+<input type="checkbox" id="cb10">
+<input type="checkbox" id="cb11">
+<input type="checkbox" id="cb12">
+<input type="checkbox" id="cb13">
+<input type="checkbox" id="cb14">
+<input type="checkbox" id="cb20">
+<input type="checkbox" id="cb21">
+<input type="checkbox" id="cb23">
+<input type="checkbox" id="cb24">
+<input type="checkbox" id="cb30">
+<input type="checkbox" id="cb31">
+<input type="checkbox" id="cb32">
+<input type="checkbox" id="cb33">
+<input type="checkbox" id="cb34">
+<input type="checkbox" id="cb40">
+<input type="checkbox" id="cb41">
+<input type="checkbox" id="cb42">
+<input type="checkbox" id="cb43">
+<input type="checkbox" id="cb44">
+
+
+<!-- CONTENIDO -->
+<h1>BINGO</h1>
+<div class="badge">Carton No. 40</div>
+<p class="hint">Toca cada numero para marcarlo &#128077;</p>
+
+<div class="card-outer">
+  <div class="tablawrap">
+    <table>
+      <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+      <tbody><tr><td><label class="ficha" for="cb00"><span>9</span></label></td><td><label class="ficha" for="cb01"><span>18</span></label></td><td><label class="ficha" for="cb02"><span>44</span></label></td><td><label class="ficha" for="cb03"><span>53</span></label></td><td><label class="ficha" for="cb04"><span>71</span></label></td></tr>
+<tr><td><label class="ficha" for="cb10"><span>6</span></label></td><td><label class="ficha" for="cb11"><span>22</span></label></td><td><label class="ficha" for="cb12"><span>45</span></label></td><td><label class="ficha" for="cb13"><span>57</span></label></td><td><label class="ficha" for="cb14"><span>62</span></label></td></tr>
+<tr><td><label class="ficha" for="cb20"><span>1</span></label></td><td><label class="ficha" for="cb21"><span>24</span></label></td><td><div class="ficha libre"><span>&#9733;</span></div></td><td><label class="ficha" for="cb23"><span>56</span></label></td><td><label class="ficha" for="cb24"><span>70</span></label></td></tr>
+<tr><td><label class="ficha" for="cb30"><span>13</span></label></td><td><label class="ficha" for="cb31"><span>27</span></label></td><td><label class="ficha" for="cb32"><span>37</span></label></td><td><label class="ficha" for="cb33"><span>46</span></label></td><td><label class="ficha" for="cb34"><span>72</span></label></td></tr>
+<tr><td><label class="ficha" for="cb40"><span>5</span></label></td><td><label class="ficha" for="cb41"><span>20</span></label></td><td><label class="ficha" for="cb42"><span>38</span></label></td><td><label class="ficha" for="cb43"><span>50</span></label></td><td><label class="ficha" for="cb44"><span>67</span></label></td></tr>
+</tbody>
+    </table>
+  </div>
+</div>
+
+<!-- BANNER DE VICTORIA -->
+<div class="bingo-banner">
+  <div class="bingo-box">
+    <div class="bingo-tit">&#127881; BINGO!</div>
+    <div class="bingo-carton">Carton No. 40</div>
+    <div class="bingo-patron"><span id="pat0" style="display:none">4 Esquinas</span><span id="pat1" style="display:none">Diagonal der</span><span id="pat2" style="display:none">Diagonal izq</span><span id="pat3" style="display:none">Fila 1</span><span id="pat4" style="display:none">Fila 2</span><span id="pat5" style="display:none">Fila 3</span><span id="pat6" style="display:none">Fila 4</span><span id="pat7" style="display:none">Fila 5</span><span id="pat8" style="display:none">Columna B</span><span id="pat9" style="display:none">Columna I</span><span id="pat10" style="display:none">Columna N</span><span id="pat11" style="display:none">Columna G</span><span id="pat12" style="display:none">Columna O</span><span id="pat13" style="display:none">Cuadrado sup-izq</span><span id="pat14" style="display:none">Cuadrado sup-der</span><span id="pat15" style="display:none">Cuadrado inf-izq</span><span id="pat16" style="display:none">Cuadrado inf-der</span><span id="pat17" style="display:none">Esquinas Interiores</span><span id="pat18" style="display:none">Rombo Central</span><span id="pat19" style="display:none">Cruz de Bordes</span></div>
+    <div class="bingo-msg">
+      Muestra este carton para reclamar tu premio.<br>
+      Para seguir jugando, desmarca las fichas<br>tocandolas otra vez.
+    </div>
+    <a class="bingo-btn" href="#">&#10004; Ver carton</a>
+  </div>
+</div>
+
+</body>
+</html>

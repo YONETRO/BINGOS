@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bingo Carton 14</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+/* Ocultar checkboxes */
+input[type=checkbox] { position:absolute; opacity:0; width:0; height:0; pointer-events:none; }
+
+body { font-family:Arial,sans-serif; font-weight:bold; background:#e0f7f7; text-align:center; padding:14px 8px 40px; min-height:100vh; }
+h1 { color:#00a0a0; font-size:52px; letter-spacing:8px; margin-bottom:8px; text-shadow:0 4px 0 #007070; }
+.badge { display:inline-block; background:#00a0a0; color:white; font-size:20px; padding:10px 32px; border-radius:30px; margin-bottom:16px; }
+
+.card-outer { background:white; border-radius:20px; padding:12px; max-width:380px; margin:0 auto 20px; border:4px solid #00a0a066; box-shadow:0 6px 24px #00a0a022; }
+table { width:100%; border-collapse:separate; border-spacing:5px; }
+th { color:#00a0a0; font-size:28px; padding:6px 0; width:20%; }
+td { width:20%; padding:0; }
+
+.ficha {
+  display:table;
+  width:16vw; height:16vw;
+  max-width:60px; max-height:60px;
+  min-width:42px; min-height:42px;
+  border-radius:50%;
+  background:#00a0a0; color:white;
+  font-size:17px; font-weight:bold;
+  margin:0 auto;
+  border:2px solid #00cccc;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition: background 0.15s, color 0.15s;
+}
+.ficha span {
+  display:table-cell;
+  vertical-align:middle;
+  text-align:center;
+  line-height:1.1;
+  pointer-events:none;
+}
+.ficha.libre {
+  cursor:default;
+  background:#b2ecec;
+  color:#00a0a0;
+  border:2px solid #00a0a066;
+  font-size:22px;
+}
+
+/* Marcar fichas al hacer check */
+#cb00:checked ~ .card-outer .ficha[for='cb00'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb01:checked ~ .card-outer .ficha[for='cb01'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb02:checked ~ .card-outer .ficha[for='cb02'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb03:checked ~ .card-outer .ficha[for='cb03'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb04:checked ~ .card-outer .ficha[for='cb04'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb10:checked ~ .card-outer .ficha[for='cb10'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb11:checked ~ .card-outer .ficha[for='cb11'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb12:checked ~ .card-outer .ficha[for='cb12'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb13:checked ~ .card-outer .ficha[for='cb13'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb14:checked ~ .card-outer .ficha[for='cb14'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb20:checked ~ .card-outer .ficha[for='cb20'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb21:checked ~ .card-outer .ficha[for='cb21'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb23:checked ~ .card-outer .ficha[for='cb23'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb24:checked ~ .card-outer .ficha[for='cb24'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb30:checked ~ .card-outer .ficha[for='cb30'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb31:checked ~ .card-outer .ficha[for='cb31'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb32:checked ~ .card-outer .ficha[for='cb32'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb33:checked ~ .card-outer .ficha[for='cb33'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb34:checked ~ .card-outer .ficha[for='cb34'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb40:checked ~ .card-outer .ficha[for='cb40'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb41:checked ~ .card-outer .ficha[for='cb41'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb42:checked ~ .card-outer .ficha[for='cb42'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb43:checked ~ .card-outer .ficha[for='cb43'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+#cb44:checked ~ .card-outer .ficha[for='cb44'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
+
+
+/* Banner de BINGO */
+.bingo-banner {
+  display:none;
+  position:fixed;
+  top:0; left:0; right:0; bottom:0;
+  background:rgba(0,100,100,0.93);
+  z-index:100;
+  padding:40px 20px;
+  text-align:center;
+}
+.bingo-banner-box {
+  background:white;
+  border:5px solid #00a0a0;
+  border-radius:24px;
+  padding:30px 20px;
+  max-width:340px;
+  margin:0 auto;
+}
+.bingo-titulo { font-size:72px; color:#00a0a0; line-height:1; margin-bottom:10px; }
+.bingo-sub { font-size:22px; color:#007070; margin-bottom:20px; }
+.bingo-instruccion { font-size:16px; color:#004444; line-height:1.6; margin-bottom:24px; }
+.btn-cerrar-banner {
+  display:inline-block;
+  background:#00a0a0; color:white;
+  border:none; border-radius:40px;
+  padding:16px 32px; font-size:20px;
+  font-weight:bold; font-family:Arial,sans-serif;
+  text-decoration:none; cursor:pointer;
+}
+
+/* Patron names */
+.pat-name { display:none; }
+
+/* Hint de toque */
+.hint { color:#007070; font-size:15px; margin-bottom:12px; }
+</style>
+</head>
+<body>
+
+<!-- Checkboxes ocultos — deben estar ANTES del contenido para que los selectores CSS funcionen -->
+<input type="checkbox" id="cb00">
+<input type="checkbox" id="cb01">
+<input type="checkbox" id="cb02">
+<input type="checkbox" id="cb03">
+<input type="checkbox" id="cb04">
+<input type="checkbox" id="cb10">
+<input type="checkbox" id="cb11">
+<input type="checkbox" id="cb12">
+<input type="checkbox" id="cb13">
+<input type="checkbox" id="cb14">
+<input type="checkbox" id="cb20">
+<input type="checkbox" id="cb21">
+<input type="checkbox" id="cb23">
+<input type="checkbox" id="cb24">
+<input type="checkbox" id="cb30">
+<input type="checkbox" id="cb31">
+<input type="checkbox" id="cb32">
+<input type="checkbox" id="cb33">
+<input type="checkbox" id="cb34">
+<input type="checkbox" id="cb40">
+<input type="checkbox" id="cb41">
+<input type="checkbox" id="cb42">
+<input type="checkbox" id="cb43">
+<input type="checkbox" id="cb44">
+
+
+<h1>BINGO</h1>
+<div class="badge">Carton No. 14</div>
+<p class="hint">Toca cada numero para marcarlo</p>
+
+<div class="card-outer">
+  <table>
+    <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+    <tbody><tr><td><label class="ficha" for="cb00"><span>8</span></label></td><td><label class="ficha" for="cb01"><span>28</span></label></td><td><label class="ficha" for="cb02"><span>35</span></label></td><td><label class="ficha" for="cb03"><span>47</span></label></td><td><label class="ficha" for="cb04"><span>69</span></label></td></tr>
+<tr><td><label class="ficha" for="cb10"><span>5</span></label></td><td><label class="ficha" for="cb11"><span>17</span></label></td><td><label class="ficha" for="cb12"><span>41</span></label></td><td><label class="ficha" for="cb13"><span>49</span></label></td><td><label class="ficha" for="cb14"><span>71</span></label></td></tr>
+<tr><td><label class="ficha" for="cb20"><span>2</span></label></td><td><label class="ficha" for="cb21"><span>19</span></label></td><td><div class="ficha libre"><span>&#9733;</span></div></td><td><label class="ficha" for="cb23"><span>59</span></label></td><td><label class="ficha" for="cb24"><span>70</span></label></td></tr>
+<tr><td><label class="ficha" for="cb30"><span>13</span></label></td><td><label class="ficha" for="cb31"><span>16</span></label></td><td><label class="ficha" for="cb32"><span>45</span></label></td><td><label class="ficha" for="cb33"><span>46</span></label></td><td><label class="ficha" for="cb34"><span>73</span></label></td></tr>
+<tr><td><label class="ficha" for="cb40"><span>1</span></label></td><td><label class="ficha" for="cb41"><span>26</span></label></td><td><label class="ficha" for="cb42"><span>44</span></label></td><td><label class="ficha" for="cb43"><span>60</span></label></td><td><label class="ficha" for="cb44"><span>62</span></label></td></tr>
+</tbody>
+  </table>
+</div>
+
+<!-- Banner de victoria -->
+<div class="bingo-banner">
+  <div class="bingo-banner-box">
+    <div class="bingo-titulo">&#127881; BINGO!</div>
+    <div class="bingo-sub">Carton No. 14</div>
+    <div class="bingo-instruccion">
+      &#10003; Muestra este carton para reclamar tu premio.<br><br>
+      Para seguir jugando, desmarca las fichas tocandolas de nuevo.
+    </div>
+    <a class="btn-cerrar-banner" href="#">Ver carton</a>
+  </div>
+</div>
+
+</body>
+</html>
