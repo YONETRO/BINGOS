@@ -4,171 +4,112 @@
 <meta charset="UTF-8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Bingo Carton 14</title>
+<title>Bingo – Cartón 14</title>
 <style>
 * { box-sizing:border-box; margin:0; padding:0; }
-/* Ocultar checkboxes */
-input[type=checkbox] { position:absolute; opacity:0; width:0; height:0; pointer-events:none; }
+body { font-family:'Arial Rounded MT Bold','Helvetica Neue',Arial,sans-serif; font-weight:900; background:#e8ffff; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:20px 12px 60px; }
+h1 { color:#00cccc; font-size:clamp(3rem,14vw,5.5rem); letter-spacing:12px; text-shadow:0 0 30px #00cccc44,0 4px 0 #00aaaa; margin-bottom:18px; line-height:1; }
+.carton-badge { background:#00cccc; color:white; font-size:clamp(1rem,4vw,1.3rem); font-weight:900; padding:10px 32px; border-radius:30px; text-align:center; letter-spacing:1px; margin-bottom:14px; box-shadow:0 0 16px #00cccc44; }
+.status-box { width:100%; max-width:420px; min-height:82px; margin-bottom:14px; display:flex; align-items:center; justify-content:center; }
+.status-normal { color:#00aaaa; font-size:clamp(1rem,4vw,1.2rem); text-align:center; letter-spacing:1px; }
 
-body { font-family:Arial,sans-serif; font-weight:bold; background:#e0f7f7; text-align:center; padding:14px 8px 40px; min-height:100vh; }
-h1 { color:#00a0a0; font-size:52px; letter-spacing:8px; margin-bottom:8px; text-shadow:0 4px 0 #007070; }
-.badge { display:inline-block; background:#00a0a0; color:white; font-size:20px; padding:10px 32px; border-radius:30px; margin-bottom:16px; }
-
-.card-outer { background:white; border-radius:20px; padding:12px; max-width:380px; margin:0 auto 20px; border:4px solid #00a0a066; box-shadow:0 6px 24px #00a0a022; }
-table { width:100%; border-collapse:separate; border-spacing:5px; }
-th { color:#00a0a0; font-size:28px; padding:6px 0; width:20%; }
-td { width:20%; padding:0; }
-
-.ficha {
-  display:table;
-  width:16vw; height:16vw;
-  max-width:60px; max-height:60px;
-  min-width:42px; min-height:42px;
-  border-radius:50%;
-  background:#00a0a0; color:white;
-  font-size:17px; font-weight:bold;
-  margin:0 auto;
-  border:2px solid #00cccc;
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-  transition: background 0.15s, color 0.15s;
-}
-.ficha span {
-  display:table-cell;
-  vertical-align:middle;
+/* ALERTA "TE FALTA 1" — estilo neón oscuro */
+.status-almost {
+  background:linear-gradient(135deg,#006666,#008f8f);
+  border-radius:18px;
+  padding:14px 18px;
   text-align:center;
-  line-height:1.1;
-  pointer-events:none;
+  width:100%;
+  border:2px solid #00ffff;
+  box-shadow:0 0 25px #00ccccaa, 0 0 50px #00999955, inset 0 0 20px #004444;
+  animation:flashIn 0.3s ease;
 }
-.ficha.libre {
-  cursor:default;
-  background:#b2ecec;
-  color:#00a0a0;
-  border:2px solid #00a0a066;
-  font-size:22px;
+@keyframes flashIn { 0%{transform:scale(0.88);opacity:0;} 60%{transform:scale(1.05);} 100%{transform:scale(1);opacity:1;} }
+.status-almost-main { font-size:clamp(1.6rem,6vw,2.2rem); color:white; line-height:1.1; text-shadow:0 0 20px #00ffffff, 0 0 40px #00cccc88; }
+.status-almost-sub { font-size:clamp(0.9rem,3vw,1.1rem); color:#ccffff; margin-top:4px; }
+
+.card-wrap { background:white; border:3px solid #00cccc55; border-radius:22px; padding:14px; box-shadow:0 12px 50px #00cccc22; width:100%; max-width:420px; margin-bottom:14px; }
+.header-row { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:10px; }
+.col-letter { font-size:clamp(1.8rem,7vw,2.6rem); color:#00cccc; text-align:center; }
+.grid { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+.cell { aspect-ratio:1; background:#00cccc; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:clamp(1.3rem,5vw,1.9rem); color:white; cursor:pointer; border:2px solid #00bbbb; box-shadow:inset 0 -4px 0 #00aaaa66,0 3px 8px #00cccc22; -webkit-tap-highlight-color:transparent; user-select:none; transition:transform 0.12s; }
+.cell:active { transform:scale(0.88); }
+.cell.marked { background:white; color:#00cccc; border:3px solid #00cccc; box-shadow:0 0 14px #00cccc44; animation:pop 0.3s ease; }
+.cell.almost:not(.marked) {
+  background:linear-gradient(135deg,#006666,#008f8f);
+  color:#00e5ff;
+  border:2px solid #00ffff;
+  box-shadow:0 0 22px #00ccccaa, 0 0 8px #00999988;
+  animation:pulseHot 0.9s ease-in-out infinite;
+  text-shadow:0 0 10px #00ffffff;
 }
-
-/* Marcar fichas al hacer check */
-#cb00:checked ~ .card-outer .ficha[for='cb00'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb01:checked ~ .card-outer .ficha[for='cb01'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb02:checked ~ .card-outer .ficha[for='cb02'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb03:checked ~ .card-outer .ficha[for='cb03'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb04:checked ~ .card-outer .ficha[for='cb04'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb10:checked ~ .card-outer .ficha[for='cb10'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb11:checked ~ .card-outer .ficha[for='cb11'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb12:checked ~ .card-outer .ficha[for='cb12'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb13:checked ~ .card-outer .ficha[for='cb13'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb14:checked ~ .card-outer .ficha[for='cb14'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb20:checked ~ .card-outer .ficha[for='cb20'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb21:checked ~ .card-outer .ficha[for='cb21'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb23:checked ~ .card-outer .ficha[for='cb23'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb24:checked ~ .card-outer .ficha[for='cb24'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb30:checked ~ .card-outer .ficha[for='cb30'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb31:checked ~ .card-outer .ficha[for='cb31'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb32:checked ~ .card-outer .ficha[for='cb32'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb33:checked ~ .card-outer .ficha[for='cb33'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb34:checked ~ .card-outer .ficha[for='cb34'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb40:checked ~ .card-outer .ficha[for='cb40'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb41:checked ~ .card-outer .ficha[for='cb41'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb42:checked ~ .card-outer .ficha[for='cb42'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb43:checked ~ .card-outer .ficha[for='cb43'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-#cb44:checked ~ .card-outer .ficha[for='cb44'] { background:white; color:#00a0a0; border:3px solid #00a0a0; }
-
-
-/* Banner de BINGO */
-.bingo-banner {
-  display:none;
-  position:fixed;
-  top:0; left:0; right:0; bottom:0;
-  background:rgba(0,100,100,0.93);
-  z-index:100;
-  padding:40px 20px;
-  text-align:center;
-}
-.bingo-banner-box {
-  background:white;
-  border:5px solid #00a0a0;
-  border-radius:24px;
-  padding:30px 20px;
-  max-width:340px;
-  margin:0 auto;
-}
-.bingo-titulo { font-size:72px; color:#00a0a0; line-height:1; margin-bottom:10px; }
-.bingo-sub { font-size:22px; color:#007070; margin-bottom:20px; }
-.bingo-instruccion { font-size:16px; color:#004444; line-height:1.6; margin-bottom:24px; }
-.btn-cerrar-banner {
-  display:inline-block;
-  background:#00a0a0; color:white;
-  border:none; border-radius:40px;
-  padding:16px 32px; font-size:20px;
-  font-weight:bold; font-family:Arial,sans-serif;
-  text-decoration:none; cursor:pointer;
-}
-
-/* Patron names */
-.pat-name { display:none; }
-
-/* Hint de toque */
-.hint { color:#007070; font-size:15px; margin-bottom:12px; }
+.cell.winner { background:#00cccc !important; color:white !important; border-color:#00eeee !important; box-shadow:0 0 30px #00cccc99 !important; animation:pulseWin 0.7s ease-in-out infinite !important; }
+.cell.free { cursor:default; background:#ccfafa; color:#00cccc; border:2px solid #00cccc44; }
+@keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.28)} 100%{transform:scale(1)} }
+@keyframes pulseHot { 0%,100%{transform:scale(1);} 50%{transform:scale(1.14);} }
+@keyframes pulseWin { 0%,100%{transform:scale(1)} 50%{transform:scale(1.18)} }
+.btn-reset { background:white; color:#00cccc; border:2px solid #00cccc55; border-radius:50px; padding:15px; font-family:'Arial Rounded MT Bold',Arial,sans-serif; font-size:clamp(1rem,4vw,1.3rem); cursor:pointer; width:100%; max-width:420px; margin-bottom:10px; -webkit-tap-highlight-color:transparent; }
+.btn-fullcard { background:white; color:#00cccc; border:2px solid #00cccc55; border-radius:50px; padding:15px; font-family:'Arial Rounded MT Bold',Arial,sans-serif; font-size:clamp(1rem,4vw,1.3rem); cursor:pointer; width:100%; max-width:420px; margin-bottom:20px; -webkit-tap-highlight-color:transparent; transition:all 0.2s; }
+.btn-fullcard.active { background:#e8ffff; color:#00cccc; border-color:#00cccc; box-shadow:0 0 16px #00cccc33; }
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,80,80,0.93); z-index:100; align-items:center; justify-content:center; padding:14px; overflow-y:auto; }
+.modal-overlay.show { display:flex; }
+.modal { background:white; border:4px solid #00cccc; border-radius:28px; padding:28px 18px 24px; text-align:center; box-shadow:0 0 80px #00cccc44; animation:zoomIn 0.4s cubic-bezier(.175,.885,.32,1.275); width:100%; max-width:380px; margin:auto; }
+@keyframes zoomIn { from{transform:scale(0.4);opacity:0} to{transform:scale(1);opacity:1} }
+.modal-bingo-title { font-size:clamp(3.5rem,14vw,5.5rem); color:#00cccc; text-shadow:0 0 40px #00cccc66; line-height:1; animation:bounce 0.5s ease infinite alternate; margin-bottom:6px; }
+@keyframes bounce { from{transform:scale(1)} to{transform:scale(1.1)} }
+.modal-win-type { font-size:clamp(1.2rem,4.5vw,1.7rem); color:#00aaaa; margin-bottom:14px; line-height:1.2; }
+.win-shape-label,.winning-nums-label { color:#00ccccaa; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+.win-shape-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; max-width:190px; margin:0 auto 14px; }
+.ws-cell { aspect-ratio:1; border-radius:50%; background:#e8ffff; border:2px solid #00cccc33; }
+.ws-cell.wh { background:#00cccc; border-color:#00eeee; box-shadow:0 0 8px #00cccc88; }
+.ws-cell.wf { background:#00aaaa; border-color:#00bbbb; }
+.winning-nums-label { margin-bottom:10px; }
+.winning-nums { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:14px; }
+.win-num { font-size:clamp(0.9rem,3.5vw,1.2rem); background:#00cccc; color:white; border-radius:50%; width:clamp(52px,13vw,62px); height:clamp(52px,13vw,62px); display:flex; align-items:center; justify-content:center; line-height:1.1; text-align:center; white-space:pre; padding:2px; animation:popIn 0.4s ease backwards; box-shadow:0 0 14px #00cccc66; }
+@keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+.modal-verify { color:#007070; font-size:clamp(0.85rem,3vw,1rem); margin-bottom:20px; line-height:1.6; padding:0 4px; }
+.btn-call { background:#00cccc; color:white; font-family:'Arial Rounded MT Bold',Arial,sans-serif; font-size:clamp(1.3rem,5vw,1.8rem); border:none; border-radius:50px; padding:16px 28px; cursor:pointer; box-shadow:0 6px 0 #008888; -webkit-tap-highlight-color:transparent; }
+.btn-call:active { transform:translateY(4px); box-shadow:0 2px 0 #008888; }
 </style>
 </head>
 <body>
-
-<!-- Checkboxes ocultos — deben estar ANTES del contenido para que los selectores CSS funcionen -->
-<input type="checkbox" id="cb00">
-<input type="checkbox" id="cb01">
-<input type="checkbox" id="cb02">
-<input type="checkbox" id="cb03">
-<input type="checkbox" id="cb04">
-<input type="checkbox" id="cb10">
-<input type="checkbox" id="cb11">
-<input type="checkbox" id="cb12">
-<input type="checkbox" id="cb13">
-<input type="checkbox" id="cb14">
-<input type="checkbox" id="cb20">
-<input type="checkbox" id="cb21">
-<input type="checkbox" id="cb23">
-<input type="checkbox" id="cb24">
-<input type="checkbox" id="cb30">
-<input type="checkbox" id="cb31">
-<input type="checkbox" id="cb32">
-<input type="checkbox" id="cb33">
-<input type="checkbox" id="cb34">
-<input type="checkbox" id="cb40">
-<input type="checkbox" id="cb41">
-<input type="checkbox" id="cb42">
-<input type="checkbox" id="cb43">
-<input type="checkbox" id="cb44">
-
-
 <h1>BINGO</h1>
-<div class="badge">Carton No. 14</div>
-<p class="hint">Toca cada numero para marcarlo</p>
-
-<div class="card-outer">
-  <table>
-    <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
-    <tbody><tr><td><label class="ficha" for="cb00"><span>8</span></label></td><td><label class="ficha" for="cb01"><span>28</span></label></td><td><label class="ficha" for="cb02"><span>35</span></label></td><td><label class="ficha" for="cb03"><span>47</span></label></td><td><label class="ficha" for="cb04"><span>69</span></label></td></tr>
-<tr><td><label class="ficha" for="cb10"><span>5</span></label></td><td><label class="ficha" for="cb11"><span>17</span></label></td><td><label class="ficha" for="cb12"><span>41</span></label></td><td><label class="ficha" for="cb13"><span>49</span></label></td><td><label class="ficha" for="cb14"><span>71</span></label></td></tr>
-<tr><td><label class="ficha" for="cb20"><span>2</span></label></td><td><label class="ficha" for="cb21"><span>19</span></label></td><td><div class="ficha libre"><span>&#9733;</span></div></td><td><label class="ficha" for="cb23"><span>59</span></label></td><td><label class="ficha" for="cb24"><span>70</span></label></td></tr>
-<tr><td><label class="ficha" for="cb30"><span>13</span></label></td><td><label class="ficha" for="cb31"><span>16</span></label></td><td><label class="ficha" for="cb32"><span>45</span></label></td><td><label class="ficha" for="cb33"><span>46</span></label></td><td><label class="ficha" for="cb34"><span>73</span></label></td></tr>
-<tr><td><label class="ficha" for="cb40"><span>1</span></label></td><td><label class="ficha" for="cb41"><span>26</span></label></td><td><label class="ficha" for="cb42"><span>44</span></label></td><td><label class="ficha" for="cb43"><span>60</span></label></td><td><label class="ficha" for="cb44"><span>62</span></label></td></tr>
-</tbody>
-  </table>
+<div class="carton-badge">Cartón No. 14</div>
+<div class="status-box" id="statusBox"><div class="status-normal">Toca los números para marcarlos 👆</div></div>
+<div class="card-wrap">
+  <div class="header-row">
+    <div class="col-letter">B</div><div class="col-letter">I</div>
+    <div class="col-letter">N</div><div class="col-letter">G</div><div class="col-letter">O</div>
+  </div>
+  <div class="grid" id="grid"></div>
 </div>
-
-<!-- Banner de victoria -->
-<div class="bingo-banner">
-  <div class="bingo-banner-box">
-    <div class="bingo-titulo">&#127881; BINGO!</div>
-    <div class="bingo-sub">Carton No. 14</div>
-    <div class="bingo-instruccion">
-      &#10003; Muestra este carton para reclamar tu premio.<br><br>
-      Para seguir jugando, desmarca las fichas tocandolas de nuevo.
-    </div>
-    <a class="btn-cerrar-banner" href="#">Ver carton</a>
+<button class="btn-reset" onclick="resetCard()">↺ Limpiar cartón</button>
+<button class="btn-fullcard" id="btnFullCard" onclick="toggleFullCardMode()">🃏 Jugar carta llena</button>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-bingo-title">🎉 ¡BINGO!</div>
+    <div class="modal-win-type" id="winType"></div>
+    <div class="win-shape-label">Así quedó la figura:</div>
+    <div class="win-shape-grid" id="winShapeGrid"></div>
+    <div class="winning-nums-label">Los números que ganaron:</div>
+    <div class="winning-nums" id="winningNums"></div>
+    <div class="modal-verify" id="modalVerify"></div>
+    <button class="btn-call" onclick="closeModal()">✔ Ver cartón</button>
   </div>
 </div>
-
+<script>
+  var CARD=[[8,28,35,47,69],[5,17,41,49,71],[2,19,null,59,70],[13,16,45,46,73],[1,26,44,60,62]];
+  var PATTERNS=[{name:'Esquinas Interiores',emoji:'💎',desc:'las 4 fichas del centro interior',cells:[[1,1],[1,3],[3,1],[3,3]]},{name:'Rombo Central',emoji:'🔷',desc:'las 4 fichas en forma de rombo',cells:[[1,2],[2,1],[3,2],[2,3]]},{name:'4 Esquinas',emoji:'🔲',desc:'las 4 esquinas del cartón',cells:[[0,0],[0,4],[4,0],[4,4]]},{name:'Cruz de Bordes',emoji:'✚',desc:'las 4 fichas en los bordes en cruz',cells:[[0,2],[2,0],[4,2],[2,4]]},{name:'Diagonal ↘',emoji:'↘',desc:'diagonal de arriba-izquierda a abajo-derecha',cells:[[0,0],[1,1],[2,2],[3,3],[4,4]]},{name:'Diagonal ↙',emoji:'↙',desc:'diagonal de arriba-derecha a abajo-izquierda',cells:[[0,4],[1,3],[2,2],[3,1],[4,0]]},{name:'Fila 1',emoji:'→',desc:'la fila completa de arriba',cells:[[0,0],[0,1],[0,2],[0,3],[0,4]]},{name:'Fila 2',emoji:'→',desc:'la segunda fila completa',cells:[[1,0],[1,1],[1,2],[1,3],[1,4]]},{name:'Fila 3',emoji:'→',desc:'la fila del medio completa',cells:[[2,0],[2,1],[2,2],[2,3],[2,4]]},{name:'Fila 4',emoji:'→',desc:'la cuarta fila completa',cells:[[3,0],[3,1],[3,2],[3,3],[3,4]]},{name:'Fila 5',emoji:'→',desc:'la fila de abajo completa',cells:[[4,0],[4,1],[4,2],[4,3],[4,4]]},{name:'Columna B',emoji:'↓',desc:'la columna B completa',cells:[[0,0],[1,0],[2,0],[3,0],[4,0]]},{name:'Columna I',emoji:'↓',desc:'la columna I completa',cells:[[0,1],[1,1],[2,1],[3,1],[4,1]]},{name:'Columna N',emoji:'↓',desc:'la columna N completa',cells:[[0,2],[1,2],[2,2],[3,2],[4,2]]},{name:'Columna G',emoji:'↓',desc:'la columna G completa',cells:[[0,3],[1,3],[2,3],[3,3],[4,3]]},{name:'Columna O',emoji:'↓',desc:'la columna O completa',cells:[[0,4],[1,4],[2,4],[3,4],[4,4]]},{name:'Cuadrado ↖',emoji:'⬛',desc:'cuadrado esquina superior izquierda',cells:[[0,0],[0,1],[1,0],[1,1]]},{name:'Cuadrado ↗',emoji:'⬛',desc:'cuadrado esquina superior derecha',cells:[[0,3],[0,4],[1,3],[1,4]]},{name:'Cuadrado ↙',emoji:'⬛',desc:'cuadrado esquina inferior izquierda',cells:[[3,0],[3,1],[4,0],[4,1]]},{name:'Cuadrado ↘',emoji:'⬛',desc:'cuadrado esquina inferior derecha',cells:[[3,3],[3,4],[4,3],[4,4]]}];
+  var marks=CARD.map(function(row){return row.map(function(n){return n===null;});});
+  var fullCard=false,wasAlmost=false;
+  function getLetter(n){if(n<=15)return'B';if(n<=30)return'I';if(n<=45)return'N';if(n<=60)return'G';return'O';}
+  function renderGrid(){var grid=document.getElementById('grid');grid.innerHTML='';for(var r=0;r<5;r++){for(var c=0;c<5;c++){var num=CARD[r][c];var cell=document.createElement('div');cell.className='cell';if(num===null){cell.classList.add('free','marked');cell.textContent='★';}else{cell.textContent=num;if(marks[r][c])cell.classList.add('marked');(function(row,col,el){el.onclick=function(){marks[row][col]=!marks[row][col];el.classList.toggle('marked');el.classList.remove('almost');check();};})(r,c,cell);}grid.appendChild(cell);}}}
+  function check(){var cells=Array.from(document.getElementById('grid').children);cells.forEach(function(el){el.classList.remove('almost','winner');});var box=document.getElementById('statusBox');if(fullCard){var total=marks.reduce(function(s,row){return s+row.filter(Boolean).length;},0);var rem=25-total;if(rem===0){cells.forEach(function(el){el.classList.add('winner');});var sg=document.getElementById('winShapeGrid');sg.innerHTML='';for(var i=0;i<25;i++){var d=document.createElement('div');d.className='ws-cell wh';sg.appendChild(d);}document.getElementById('winningNums').innerHTML='';document.getElementById('winType').textContent='🎊 ¡CARTA COMPLETA!';document.getElementById('modalVerify').innerHTML='<strong style="color:#00cccc">¡Llenaste todo el Cartón No. 14!</strong>';document.getElementById('modal').classList.add('show');}else if(rem<=3){box.innerHTML='<div class="status-almost"><div class="status-almost-main">🚨 ¡FALTAN '+rem+'!</div><div class="status-almost-sub">Modo carta llena</div></div>';wasAlmost=true;}else{wasAlmost=false;box.innerHTML='<div class="status-normal">🃏 Carta llena — faltan <strong>'+rem+'</strong></div>';}return;}var wonIdx=null,minMissing=99;var almostCells={},almostNames=[];for(var pi=0;pi<PATTERNS.length;pi++){var pat=PATTERNS[pi],missing=[];for(var ci=0;ci<pat.cells.length;ci++){var rr=pat.cells[ci][0],cc=pat.cells[ci][1];if(!marks[rr][cc])missing.push(rr*5+cc);}if(missing.length===0){wonIdx=pi;break;}if(missing.length<minMissing)minMissing=missing.length;if(missing.length===1){almostCells[missing[0]]=true;almostNames.push(pat.name);}}if(wonIdx!==null){showBingo(wonIdx);return;}for(var key in almostCells){var idx=parseInt(key);if(cells[idx]&&!cells[idx].classList.contains('marked'))cells[idx].classList.add('almost');}if(almostNames.length>0){var ns=almostNames.length<=2?almostNames.join(' y '):almostNames.length+' patrones';box.innerHTML='<div class="status-almost"><div class="status-almost-main">🚨 ¡TE FALTA 1!</div><div class="status-almost-sub">'+ns+'</div></div>';wasAlmost=true;}else if(minMissing===2){wasAlmost=false;box.innerHTML='<div class="status-normal" style="color:#00aaaa">⚡ ¡Solo te faltan 2!</div>';}else{wasAlmost=false;box.innerHTML='<div class="status-normal">Toca los números para marcarlos 👆</div>';}}
+  function showBingo(pi){var pat=PATTERNS[pi];var cells=Array.from(document.getElementById('grid').children);for(var i=0;i<pat.cells.length;i++)cells[pat.cells[i][0]*5+pat.cells[i][1]].classList.add('winner');var sg=document.getElementById('winShapeGrid');sg.innerHTML='';var ws={};for(var i=0;i<pat.cells.length;i++)ws[pat.cells[i][0]*5+pat.cells[i][1]]=true;for(var r=0;r<5;r++)for(var c=0;c<5;c++){var d=document.createElement('div');d.className='ws-cell'+(CARD[r][c]===null?' wf':'')+(ws[r*5+c]?' wh':'');sg.appendChild(d);}var nc=document.getElementById('winningNums');nc.innerHTML='';var numList=[];for(var i=0;i<pat.cells.length;i++){var r=pat.cells[i][0],c=pat.cells[i][1],n=CARD[r][c];var d=document.createElement('div');d.className='win-num';d.style.animationDelay=(i*0.1)+'s';if(n===null){d.textContent='★';numList.push('la estrella');}else{d.textContent=getLetter(n)+'\n'+n;numList.push(getLetter(n)+'-'+n);}nc.appendChild(d);}document.getElementById('winType').textContent=pat.emoji+' '+pat.name;document.getElementById('modalVerify').innerHTML='Ganaste con <strong style="color:#00cccc">'+pat.desc+'</strong>.<br>Fichas: <strong style="color:#00aaaa">'+numList.join(', ')+'</strong>';document.getElementById('modal').classList.add('show');}
+  function closeModal(){document.getElementById('modal').classList.remove('show');}
+  function toggleFullCardMode(){fullCard=!fullCard;wasAlmost=false;var btn=document.getElementById('btnFullCard');if(fullCard){btn.textContent='🃏 Carta llena: ACTIVO';btn.classList.add('active');}else{btn.textContent='🃏 Jugar carta llena';btn.classList.remove('active');}check();}
+  function resetCard(){marks=CARD.map(function(row){return row.map(function(n){return n===null;});});wasAlmost=false;document.getElementById('modal').classList.remove('show');document.getElementById('statusBox').innerHTML='<div class="status-normal">Toca los números para marcarlos 👆</div>';renderGrid();}
+  renderGrid();
+</script>
 </body>
 </html>
