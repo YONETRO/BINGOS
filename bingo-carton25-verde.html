@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bingo – Cartón 25</title>
+<style>
+* {box-sizing:border-box;margin:0;padding:0;}
+body {font-family:'Arial Rounded MT Bold','Helvetica Neue',Arial,sans-serif;font-weight:900;background:#0a0a0a;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 10px 70px;}
+h1 {color:#22c55e;font-size:clamp(3.5rem,14vw,6rem);letter-spacing:10px;text-shadow:0 0 40px #22c55e88,0 5px 0 #064e1a;margin-bottom:6px;line-height:1;}
+.carton-badge {background:#22c55e;color:#0a0a0a;font-size:1.3rem;padding:8px 28px;border-radius:30px;letter-spacing:1px;text-align:center;margin-bottom:14px;}
+.status-box {width:100%;max-width:420px;margin-bottom:14px;min-height:74px;display:flex;align-items:center;justify-content:center;}
+.status-normal {color:#86efac;font-size:1.15rem;letter-spacing:1px;text-align:center;}
+.status-almost {background:linear-gradient(135deg,#9ca3af,#d1d5db,#6b7280);border-radius:18px;padding:16px 20px;text-align:center;width:100%;box-shadow:0 0 40px #d1d5db88;animation:flashIn 0.3s ease;}
+@keyframes flashIn {0%{transform:scale(0.88);opacity:0;}60%{transform:scale(1.06);}100%{transform:scale(1);opacity:1;}}
+.status-almost-main {font-size:clamp(1.9rem,7vw,2.6rem);color:#0a0a0a;line-height:1.1;}
+.status-almost-sub {font-size:clamp(1rem,3.5vw,1.2rem);color:#111827dd;margin-top:5px;}
+.card-wrap {background:linear-gradient(145deg,#052e16,#0a0a0a);border-radius:22px;padding:14px;box-shadow:0 20px 70px #000b,0 0 0 5px #22c55e44;width:100%;max-width:420px;margin-bottom:16px;}
+.header-row {display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px;}
+.col-letter {font-size:clamp(2rem,7vw,2.8rem);color:#22c55e;text-align:center;text-shadow:0 2px 6px #00000088;}
+.grid {display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.cell {aspect-ratio:1;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:clamp(1.4rem,5.5vw,2rem);color:#f0fdf4;cursor:pointer;user-select:none;border:3px solid #22c55e44;box-shadow:inset 0 -5px 0 #0006,0 4px 10px #0005;-webkit-tap-highlight-color:transparent;transition:transform 0.15s,background 0.3s;}
+.cell:active {transform:scale(0.91);}
+.cell.marked {background:#052e16;color:#22c55e;box-shadow:0 0 18px #22c55e33,inset 0 -3px 0 #00000055;border-color:#22c55e55;animation:pop 0.35s ease;}
+.cell.almost:not(.marked) {background:linear-gradient(135deg,#9ca3af,#e5e7eb,#6b7280);color:#0a0a0a;box-shadow:0 0 32px #d1d5db99,inset 0 -5px 0 #00000033;border-color:#e5e7ebaa;animation:pulseHot 0.9s ease-in-out infinite;}
+.cell.winner {background:#22c55e !important;color:#052e16 !important;border-color:#22c55eaa !important;box-shadow:0 0 36px #22c55e99 !important;animation:pulseWin 0.7s ease-in-out infinite !important;}
+.cell.free {cursor:default;}
+@keyframes pulseHot {0%,100%{transform:scale(1);}50%{transform:scale(1.16);}}
+@keyframes pulseWin {0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
+@keyframes pop {0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);}}
+.btn-reset {background:#0a0a0a;color:#22c55e;font-family:'Arial Rounded MT Bold',Arial,sans-serif;font-size:clamp(1.1rem,4vw,1.4rem);border:3px solid #22c55e55;border-radius:60px;padding:16px;cursor:pointer;width:100%;max-width:420px;margin-bottom:10px;-webkit-tap-highlight-color:transparent;}
+.btn-fullcard {background:#0a0a0a;color:#86efac;font-family:'Arial Rounded MT Bold',Arial,sans-serif;font-size:clamp(1.1rem,4vw,1.4rem);border:3px solid #22c55e33;border-radius:60px;padding:16px;cursor:pointer;width:100%;max-width:420px;margin-bottom:20px;-webkit-tap-highlight-color:transparent;transition:all 0.2s;}
+.btn-fullcard.active {background:#052e16;color:#22c55e;border-color:#22c55e;box-shadow:0 0 20px #22c55e44;}
+.modal-overlay {display:none;position:fixed;inset:0;background:#000000ee;z-index:100;align-items:center;justify-content:center;padding:14px;overflow-y:auto;}
+.modal-overlay.show {display:flex;}
+.modal {background:linear-gradient(160deg,#052e16,#0a0a0a);border:5px solid #22c55e;border-radius:30px;padding:30px 20px 28px;text-align:center;box-shadow:0 0 100px #22c55e88;animation:zoomIn 0.45s cubic-bezier(.175,.885,.32,1.275);width:100%;max-width:380px;margin:auto;}
+@keyframes zoomIn {from{transform:scale(0.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-bingo-title {font-size:clamp(4rem,16vw,6rem);color:#22c55e;text-shadow:0 0 50px #22c55ecc;line-height:1;animation:bounce 0.5s ease infinite alternate;margin-bottom:6px;}
+@keyframes bounce {from{transform:scale(1);}to{transform:scale(1.1);}}
+.modal-win-type {font-size:clamp(1.4rem,5vw,1.9rem);color:#22c55e;margin-bottom:14px;line-height:1.2;}
+.win-shape-section {margin-bottom:16px;}
+.win-shape-label,.winning-nums-label {color:#22c55eaa;font-size:clamp(0.9rem,3vw,1rem);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.win-shape-grid {display:grid;grid-template-columns:repeat(5,1fr);gap:4px;max-width:200px;margin:0 auto;}
+.ws-cell {aspect-ratio:1;border-radius:50%;background:#1a1a1a;border:2px solid #33333366;}
+.ws-cell.wh {background:#22c55e;border-color:#22c55eaa;}
+.ws-cell.wf {background:#9ca3af;border-color:#d1d5dbaa;}
+.winning-nums-label {margin-bottom:10px;}
+.winning-nums {display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px;}
+.win-num {font-size:clamp(1rem,4vw,1.3rem);background:#22c55e;color:#052e16;border-radius:50%;width:clamp(54px,14vw,64px);height:clamp(54px,14vw,64px);display:flex;align-items:center;justify-content:center;line-height:1.1;text-align:center;white-space:pre;padding:2px;animation:popIn 0.4s ease backwards;box-shadow:0 0 18px #22c55e66;}
+@keyframes popIn {from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-verify {color:#ffffffaa;font-size:clamp(0.9rem,3vw,1.05rem);margin-bottom:22px;line-height:1.6;padding:0 4px;}
+.btn-call {background:#22c55e;color:#052e16;font-family:'Arial Rounded MT Bold',Arial,sans-serif;font-size:clamp(1.5rem,6vw,2rem);border:none;border-radius:60px;padding:18px 28px;cursor:pointer;box-shadow:0 8px 0 #064e1a;-webkit-tap-highlight-color:transparent;}
+.btn-call:active {transform:translateY(4px);box-shadow:0 4px 0 #064e1a;}
+</style>
+</head>
+<body>
+<h1>BINGO</h1>
+<div class="carton-badge">Cartón No. 25</div>
+<div class="status-box" id="statusBox"><div class="status-normal">Toca los números para marcarlos 👆</div></div>
+<div class="card-wrap">
+  <div class="header-row">
+    <div class="col-letter">B</div><div class="col-letter">I</div>
+    <div class="col-letter">N</div><div class="col-letter">G</div><div class="col-letter">O</div>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+<button class="btn-reset" onclick="resetCard()">↺ Limpiar cartón</button>
+<button class="btn-fullcard" id="btnFullCard" onclick="toggleFullCardMode()">🃏 Jugar carta llena</button>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-bingo-title">🎉 ¡BINGO!</div>
+    <div class="modal-win-type" id="winType"></div>
+    <div class="win-shape-section"><div class="win-shape-label">Así quedó la figura:</div><div class="win-shape-grid" id="winShapeGrid"></div></div>
+    <div class="winning-nums-label">Los números que ganaron:</div>
+    <div class="winning-nums" id="winningNums"></div>
+    <div class="modal-verify" id="modalVerify"></div>
+    <button class="btn-call" onclick="closeModal()">✔ Ver cartón</button>
+  </div>
+</div>
+<script>
+  var CARD=[[9,24,32,55,72],[13,21,39,49,68],[5,28,null,57,61],[7,20,43,59,70],[11,26,33,60,65]];
+  var PATTERNS=[{name:'Esquinas Interiores',emoji:'💎',desc:'las 4 fichas del centro interior',cells:[[1,1],[1,3],[3,1],[3,3]]},{name:'Rombo Central',emoji:'🔷',desc:'las 4 fichas en forma de rombo',cells:[[1,2],[2,1],[3,2],[2,3]]},{name:'4 Esquinas',emoji:'🔲',desc:'las 4 esquinas del cartón',cells:[[0,0],[0,4],[4,0],[4,4]]},{name:'Cruz de Bordes',emoji:'✚',desc:'las 4 fichas en los bordes en cruz',cells:[[0,2],[2,0],[4,2],[2,4]]},{name:'Diagonal ↘',emoji:'↘',desc:'diagonal arriba-izq a abajo-der',cells:[[0,0],[1,1],[2,2],[3,3],[4,4]]},{name:'Diagonal ↙',emoji:'↙',desc:'diagonal arriba-der a abajo-izq',cells:[[0,4],[1,3],[2,2],[3,1],[4,0]]},{name:'Fila 1',emoji:'→',desc:'fila de arriba completa',cells:[[0,0],[0,1],[0,2],[0,3],[0,4]]},{name:'Fila 2',emoji:'→',desc:'segunda fila completa',cells:[[1,0],[1,1],[1,2],[1,3],[1,4]]},{name:'Fila 3',emoji:'→',desc:'fila del medio completa',cells:[[2,0],[2,1],[2,2],[2,3],[2,4]]},{name:'Fila 4',emoji:'→',desc:'cuarta fila completa',cells:[[3,0],[3,1],[3,2],[3,3],[3,4]]},{name:'Fila 5',emoji:'→',desc:'fila de abajo completa',cells:[[4,0],[4,1],[4,2],[4,3],[4,4]]},{name:'Columna B',emoji:'↓',desc:'columna B completa',cells:[[0,0],[1,0],[2,0],[3,0],[4,0]]},{name:'Columna I',emoji:'↓',desc:'columna I completa',cells:[[0,1],[1,1],[2,1],[3,1],[4,1]]},{name:'Columna N',emoji:'↓',desc:'columna N completa',cells:[[0,2],[1,2],[2,2],[3,2],[4,2]]},{name:'Columna G',emoji:'↓',desc:'columna G completa',cells:[[0,3],[1,3],[2,3],[3,3],[4,3]]},{name:'Columna O',emoji:'↓',desc:'columna O completa',cells:[[0,4],[1,4],[2,4],[3,4],[4,4]]},{name:'Cuadrado ↖',emoji:'⬛',desc:'cuadrado esquina superior izquierda',cells:[[0,0],[0,1],[1,0],[1,1]]},{name:'Cuadrado ↗',emoji:'⬛',desc:'cuadrado esquina superior derecha',cells:[[0,3],[0,4],[1,3],[1,4]]},{name:'Cuadrado ↙',emoji:'⬛',desc:'cuadrado esquina inferior izquierda',cells:[[3,0],[3,1],[4,0],[4,1]]},{name:'Cuadrado ↘',emoji:'⬛',desc:'cuadrado esquina inferior derecha',cells:[[3,3],[3,4],[4,3],[4,4]]}];
+  var marks=CARD.map(function(row){return row.map(function(n){return n===null;});});
+  var fullCard=false,wasAlmost=false;
+  function getLetter(n){if(n<=15)return'B';if(n<=30)return'I';if(n<=45)return'N';if(n<=60)return'G';return'O';}
+  function renderGrid(){var grid=document.getElementById('grid');grid.innerHTML='';for(var r=0;r<5;r++){for(var c=0;c<5;c++){var num=CARD[r][c];var cell=document.createElement('div');cell.className='cell';if(num===null){cell.classList.add('free','marked');cell.textContent='★';}else{cell.textContent=num;if(marks[r][c])cell.classList.add('marked');(function(row,col,el){el.onclick=function(){toggleCell(row,col,el);};})(r,c,cell);}grid.appendChild(cell);}}}
+  function toggleCell(r,c,el){marks[r][c]=!marks[r][c];el.classList.toggle('marked');el.classList.remove('almost');check();}
+  function speak(text,delay){if(!window.speechSynthesis)return;setTimeout(function(){window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(text);u.lang='es-ES';u.rate=0.82;u.pitch=1.1;u.volume=1;window.speechSynthesis.speak(u);},delay||0);}
+  function check(){
+    var cells=Array.from(document.getElementById('grid').children);
+    cells.forEach(function(el){el.classList.remove('almost','winner');});
+    var box=document.getElementById('statusBox');
+    if(fullCard){
+      var total=marks.reduce(function(s,row){return s+row.filter(Boolean).length;},0);
+      var remaining=25-total;
+      if(remaining===0){
+        cells.forEach(function(el){el.classList.add('winner');});
+        var sg=document.getElementById('winShapeGrid');sg.innerHTML='';
+        for(var i=0;i<25;i++){var d=document.createElement('div');d.className='ws-cell wh';sg.appendChild(d);}
+        document.getElementById('winningNums').innerHTML='';
+        document.getElementById('winType').textContent='🎊 ¡CARTA COMPLETA!';
+        document.getElementById('modalVerify').innerHTML='<strong>¡Llenaste todo el cartón No. 25!</strong>';
+        document.getElementById('modal').classList.add('show');
+        speak('¡Bingo! ¡Llenaste la carta completa!',800);
+      }else if(remaining<=3){
+        box.innerHTML='<div class="status-almost"><div class="status-almost-main">🚨 ¡FALTAN '+remaining+'!</div><div class="status-almost-sub">Modo carta llena</div></div>';
+        if(!wasAlmost){speak('¡Faltan solo '+remaining+'!',400);}
+        wasAlmost=true;
+      }else{
+        wasAlmost=false;
+        box.innerHTML='<div class="status-normal">🃏 Carta llena — faltan <strong>'+remaining+'</strong></div>';
+      }
+      return;
+    }
+    var wonIdx=null,minMissing=99;
+    var almostCells={},almostNames=[];
+    for(var pi=0;pi<PATTERNS.length;pi++){
+      var pat=PATTERNS[pi],missing=[];
+      for(var ci=0;ci<pat.cells.length;ci++){var rr=pat.cells[ci][0],cc=pat.cells[ci][1];if(!marks[rr][cc])missing.push(rr*5+cc);}
+      if(missing.length===0){wonIdx=pi;break;}
+      if(missing.length<minMissing)minMissing=missing.length;
+      if(missing.length===1){almostCells[missing[0]]=true;almostNames.push(pat.name);}
+    }
+    if(wonIdx!==null){showBingo(wonIdx);return;}
+    for(var key in almostCells){var idx=parseInt(key);if(cells[idx]&&!cells[idx].classList.contains('marked'))cells[idx].classList.add('almost');}
+    if(almostNames.length>0){
+      var ns=almostNames.length<=2?almostNames.join(' y '):almostNames.length+' patrones';
+      box.innerHTML='<div class="status-almost"><div class="status-almost-main">🚨 ¡TE FALTA 1!</div><div class="status-almost-sub">'+ns+'</div></div>';
+      if(!wasAlmost){speak('¡Cuidado! ¡Te falta solo un número para ganar!',700);}
+      wasAlmost=true;
+    }else if(minMissing===2){
+      wasAlmost=false;
+      box.innerHTML='<div class="status-normal" style="color:#86efac">⚡ ¡Solo te faltan 2!</div>';
+    }else{
+      wasAlmost=false;
+      box.innerHTML='<div class="status-normal">Toca los números para marcarlos 👆</div>';
+    }
+  }
+  function showBingo(pi){
+    var pat=PATTERNS[pi];
+    var cells=Array.from(document.getElementById('grid').children);
+    for(var i=0;i<pat.cells.length;i++)cells[pat.cells[i][0]*5+pat.cells[i][1]].classList.add('winner');
+    var sg=document.getElementById('winShapeGrid');sg.innerHTML='';var ws={};
+    for(var i=0;i<pat.cells.length;i++)ws[pat.cells[i][0]*5+pat.cells[i][1]]=true;
+    for(var r=0;r<5;r++)for(var c=0;c<5;c++){var d=document.createElement('div');d.className='ws-cell'+(CARD[r][c]===null?' wf':'')+(ws[r*5+c]?' wh':'');sg.appendChild(d);}
+    var nc=document.getElementById('winningNums');nc.innerHTML='';var numList=[];
+    for(var i=0;i<pat.cells.length;i++){var r=pat.cells[i][0],c=pat.cells[i][1],n=CARD[r][c];var d=document.createElement('div');d.className='win-num';d.style.animationDelay=(i*0.1)+'s';if(n===null){d.textContent='★';numList.push('la estrella');}else{d.textContent=getLetter(n)+'\n'+n;numList.push(getLetter(n)+'-'+n);}nc.appendChild(d);}
+    document.getElementById('winType').textContent=pat.emoji+' '+pat.name;
+    document.getElementById('modalVerify').innerHTML='Ganaste con <strong>'+pat.desc+'</strong>.<br>Fichas: <strong>'+numList.join(', ')+'</strong>';
+    document.getElementById('modal').classList.add('show');
+    speak('¡Bingo! ¡Ganaste con el cartón 25! '+pat.name+'. '+numList.join(', '),800);
+  }
+  function closeModal(){document.getElementById('modal').classList.remove('show');}
+  function toggleFullCardMode(){fullCard=!fullCard;wasAlmost=false;var btn=document.getElementById('btnFullCard');if(fullCard){btn.textContent='🃏 Carta llena: ACTIVO';btn.classList.add('active');}else{btn.textContent='🃏 Jugar carta llena';btn.classList.remove('active');}check();}
+  function resetCard(){marks=CARD.map(function(row){return row.map(function(n){return n===null;});});wasAlmost=false;document.getElementById('modal').classList.remove('show');document.getElementById('statusBox').innerHTML='<div class="status-normal">Toca los números para marcarlos 👆</div>';renderGrid();}
+  renderGrid();
+</script>
+</body>
+</html>
